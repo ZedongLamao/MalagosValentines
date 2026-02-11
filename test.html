@@ -10,7 +10,6 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
-        /* CSS Variables for the Deep Romance Theme */
         :root {
             --bg-gradient: linear-gradient(-45deg, #ff758c, #ff7eb3, #ffc3a0, #ffafbd);
             --card-bg: rgba(255, 255, 255, 0.85);
@@ -33,6 +32,11 @@
             font-family: 'Poppins', sans-serif;
             overflow: hidden;
             text-align: center;
+
+            /* Scaling the whole site to 80% */
+            transform: scale(0.8);
+            transform-origin: center;
+            width: 100%;
         }
 
         @keyframes bgMove {
@@ -40,6 +44,47 @@
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
+
+        /* --- START SCREEN STYLES --- */
+        #start-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-gradient);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .ready-text {
+            font-family: 'Sacramento', cursive;
+            font-size: 50px;
+            color: white;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .open-btn {
+            padding: 15px 40px;
+            font-size: 20px;
+            background: white;
+            color: #ff4d6d;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .open-btn:hover { transform: scale(1.1); }
+
+        /* Hide the main content and music toggle until start */
+        #main-card, .music-toggle {
+            display: none;
+        }
+        /* --- END START SCREEN STYLES --- */
 
         .container {
             background: var(--card-bg);
@@ -52,7 +97,6 @@
             transition: all 0.3s ease;
         }
 
-        /* The Cute GIF Image */
         .gif-container img {
             width: 100%;
             height: auto;
@@ -80,7 +124,7 @@
             justify-content: center;
             align-items: center;
             gap: 20px;
-            flex-wrap: wrap; /* Allows wrapping if buttons get huge */
+            flex-wrap: wrap;
         }
 
         button {
@@ -105,14 +149,12 @@
             color: #666;
         }
 
-        /* Hidden success message */
         .success-message {
             display: none;
             flex-direction: column;
             align-items: center;
         }
 
-        /* Music Player (Tiny floating button) */
         .music-toggle {
             position: fixed;
             bottom: 20px;
@@ -123,14 +165,18 @@
             cursor: pointer;
             font-size: 20px;
         }
-
     </style>
 </head>
 <body>
 
+    <div id="start-screen">
+        <h2 class="ready-text">Are you ready, Baby? 💖</h2>
+        <button class="open-btn" onclick="startExperience()">Yes, I'm Ready! ✨</button>
+    </div>
+    
     <div class="container" id="main-card">
         <div class="gif-container">
-            <img id="main-img" src="https://media.tenor.com/K2SG_qF8aGsAAAAi/cute-love.gif" alt="Cute Bear">
+            <img id="main-img" src="photoop.jpg" alt="Cute Bear">
         </div>
 
         <h1>My Mochi Kathy 🐶</h1>
@@ -153,7 +199,7 @@
     </div>
 
     <audio id="bg-music" loop>
-        <source src="https://assets.mixkit.co/music/preview/mixkit-romantic-guitar-329.mp3" type="audio/mp3">
+        <source src="BackgroundSound.mp3" type="audio/mp3">
     </audio>
 
     <div class="music-toggle" onclick="toggleMusic()">🎵</div>
@@ -164,85 +210,63 @@
         const mainImg = document.getElementById('main-img');
         const mainCard = document.getElementById('main-card');
         const successCard = document.getElementById('success-card');
+        const audio = document.getElementById('bg-music');
+
+        // This function starts the music and shows the proposal
+        function startExperience() {
+            audio.play(); // Music starts here
+            document.getElementById('start-screen').style.display = 'none';
+            mainCard.style.display = 'block';
+            document.querySelector('.music-toggle').style.display = 'block';
+        }
         
         let noClickCount = 0;
-        // Funny texts that appear on the No button
         const noTexts = [
-            "No 💀", 
-            "Are you sure?", 
-            "Really sure?", 
-            "Pookie please?", 
-            "Don't do this!", 
-            "I'm gonna cry...", 
-            "You're breaking my heart ;(", 
-            "Just click YES already!"
+            "No 💀", "Are you sure?", "Really sure?", "Pookie please?", 
+            "Don't do this!", "I'm gonna cry...", "You're breaking my heart ;(", "Just click YES already!"
         ];
 
         function handleNo() {
             noClickCount++;
-            
-            // 1. Change Text
             if (noClickCount < noTexts.length) {
                 noBtn.innerText = noTexts[noClickCount];
             } else {
                 noBtn.innerText = "No... (Disabled)";
-                noBtn.style.display = 'none'; // Give up and hide it eventually
+                noBtn.style.display = 'none';
             }
 
-            // 2. Make Yes Button BIGGER
-            const currentSize = 16 + (noClickCount * 12); // Increases by 12px each time
+            const currentSize = 16 + (noClickCount * 12);
             yesBtn.style.fontSize = `${currentSize}px`;
             yesBtn.style.padding = `${12 + noClickCount * 5}px ${24 + noClickCount * 10}px`;
 
-            // 3. Change Image to something sad/shocked (Optional)
             if (noClickCount === 1) {
-                mainImg.src = "https://media.tenor.com/ivKWdfdbV3EAAAAi/bear-sad.gif"; // Sad bear
+                mainImg.src = "https://media.tenor.com/ivKWdfdbV3EAAAAi/bear-sad.gif";
             }
         }
 
         function handleYes() {
-            // 1. Trigger Confetti
             confetti({
                 particleCount: 200,
                 spread: 100,
                 origin: { y: 0.6 }
             });
 
-            // 2. Hide Question, Show Success
             mainCard.style.display = 'none';
             successCard.style.display = 'flex';
 
-            // 3. Send Email
+            // IMPORTANT: Replace demo@gmail.com with YOUR email
             fetch("https://formsubmit.co/ajax/demo@gmail.com", {
                 method: "POST",
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                 body: JSON.stringify({
                     message: "Mochi Kathy clicked YES! (After " + noClickCount + " no attempts) 💖"
                 })
-            })
-            .then(response => response.json())
-            .then(data => console.log(data))
-            .catch(error => console.log(error));
+            });
         }
 
-        // Music Toggle
-        const audio = document.getElementById('bg-music');
         function toggleMusic() {
-            if (audio.paused) {
-                audio.play();
-            } else {
-                audio.pause();
-            }
+            if (audio.paused) { audio.play(); } else { audio.pause(); }
         }
-        
-        // Auto-play music on first interaction (browsers block auto-play)
-        document.body.addEventListener('click', function() {
-            audio.play();
-        }, { once: true });
-
     </script>
 </body>
 </html>
