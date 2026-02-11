@@ -32,8 +32,6 @@
             font-family: 'Poppins', sans-serif;
             overflow: hidden;
             text-align: center;
-
-            /* Scaling the whole site to 80% */
             transform: scale(0.8);
             transform-origin: center;
             width: 100%;
@@ -45,7 +43,6 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* --- START SCREEN STYLES --- */
         #start-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -80,11 +77,9 @@
 
         .open-btn:hover { transform: scale(1.1); }
 
-        /* Hide the main content and music toggle until start */
-        #main-card, .music-toggle {
+        #main-card, .music-toggle, #canva-card {
             display: none;
         }
-        /* --- END START SCREEN STYLES --- */
 
         .container {
             background: var(--card-bg);
@@ -149,6 +144,12 @@
             color: #666;
         }
 
+        #years-btn {
+            background-color: #ff4d6d;
+            color: white;
+            margin-top: 20px;
+        }
+
         .success-message {
             display: none;
             flex-direction: column;
@@ -165,6 +166,22 @@
             cursor: pointer;
             font-size: 20px;
         }
+
+        /* Styling for the Canva Display Section */
+        #canva-card {
+            flex-direction: column;
+            align-items: center;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        .canva-iframe {
+            width: 100%;
+            height: 450px;
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
     </style>
 </head>
 <body>
@@ -173,10 +190,10 @@
         <h2 class="ready-text">Are you ready, Baby? 💖</h2>
         <button class="open-btn" onclick="startExperience()">Yes, I'm Ready! ✨</button>
     </div>
-    
+    
     <div class="container" id="main-card">
         <div class="gif-container">
-            <img id="main-img" src="Photoop.jpg" alt="Cute Bear">
+            <img id="main-img" src="photoop.jpg" alt="Cute Bear">
         </div>
 
         <h1>My Mochi Kathy 🐶</h1>
@@ -195,6 +212,15 @@
             </div>
             <h1>YAYYY! ❤️‍🔥</h1>
             <p>I knew it! Excited nako sa Malagos date nato! I love you so much Mochi! 💖</p>
+            
+            <button id="years-btn" onclick="showCanva()">Us Through The Years 📸</button>
+        </div>
+    </div>
+
+    <div class="success-message" id="canva-card">
+        <div class="container">
+            <iframe class="canva-iframe" src="journeymap.pdf"></iframe>
+            <p style="margin-top: 20px;">I love every second with you! 💖</p>
         </div>
     </div>
 
@@ -210,11 +236,11 @@
         const mainImg = document.getElementById('main-img');
         const mainCard = document.getElementById('main-card');
         const successCard = document.getElementById('success-card');
+        const canvaCard = document.getElementById('canva-card');
         const audio = document.getElementById('bg-music');
 
-        // This function starts the music and shows the proposal
         function startExperience() {
-            audio.play(); // Music starts here
+            audio.play();
             document.getElementById('start-screen').style.display = 'none';
             mainCard.style.display = 'block';
             document.querySelector('.music-toggle').style.display = 'block';
@@ -254,7 +280,6 @@
             mainCard.style.display = 'none';
             successCard.style.display = 'flex';
 
-            // IMPORTANT: Replace demo@gmail.com with YOUR email
             fetch("https://formsubmit.co/ajax/demo@gmail.com", {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -264,11 +289,15 @@
             });
         }
 
+        // New function to show the Canva section
+        function showCanva() {
+            successCard.style.display = 'none';
+            canvaCard.style.display = 'flex';
+        }
+
         function toggleMusic() {
             if (audio.paused) { audio.play(); } else { audio.pause(); }
         }
     </script>
 </body>
 </html>
-
-
