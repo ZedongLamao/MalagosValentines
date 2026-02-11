@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Mochi Kathy 💖</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Sacramento&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        /* CSS Variables for the Deep Romance Theme */
+        :root {
+            --bg-gradient: linear-gradient(-45deg, #ff758c, #ff7eb3, #ffc3a0, #ffafbd);
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --text-color: #592e3d;
+            --btn-yes: #ff4d6d;
+            --btn-no: #888;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg-gradient);
+            background-size: 400% 400%;
+            animation: bgMove 12s ease infinite;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        @keyframes bgMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            max-width: 90%;
+            width: 400px;
+            transition: all 0.3s ease;
+        }
+
+        /* The Cute GIF Image */
+        .gif-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-family: 'Sacramento', cursive;
+            font-size: 36px;
+            color: #d6336c;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        p {
+            color: var(--text-color);
+            font-size: 16px;
+            margin: 10px 0 30px;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap; /* Allows wrapping if buttons get huge */
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+        }
+
+        #yes-btn {
+            background-color: var(--btn-yes);
+            color: white;
+            box-shadow: 0 8px 20px rgba(255, 77, 109, 0.4);
+        }
+
+        #no-btn {
+            background-color: #e0e0e0;
+            color: #666;
+        }
+
+        /* Hidden success message */
+        .success-message {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Music Player (Tiny floating button) */
+        .music-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.5);
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container" id="main-card">
+        <div class="gif-container">
+            <img id="main-img" src="https://media.tenor.com/K2SG_qF8aGsAAAAi/cute-love.gif" alt="Cute Bear">
+        </div>
+
+        <h1>My Mochi Kathy 🐶</h1>
+        <p>Pwede bako mu hangyo nimo na mahimong Valentines nimo?</p>
+
+        <div class="btn-group">
+            <button id="yes-btn" onclick="handleYes()">Yes! ❤️</button>
+            <button id="no-btn" onclick="handleNo()">No 💀</button>
+        </div>
+    </div>
+
+    <div class="success-message" id="success-card">
+        <div class="container">
+            <div class="gif-container">
+                <img src="https://media.tenor.com/gUiu1zyxfzYAAAAi/bear-kiss-bear-kisses.gif" alt="Happy Bear">
+            </div>
+            <h1>YAYYY! ❤️‍🔥</h1>
+            <p>I knew it! Excited nako sa Malagos date nato! I love you so much Mochi! 💖</p>
+        </div>
+    </div>
+
+    <audio id="bg-music" loop>
+        <source src="https://assets.mixkit.co/music/preview/mixkit-romantic-guitar-329.mp3" type="audio/mp3">
+    </audio>
+
+    <div class="music-toggle" onclick="toggleMusic()">🎵</div>
+
+    <script>
+        const yesBtn = document.getElementById('yes-btn');
+        const noBtn = document.getElementById('no-btn');
+        const mainImg = document.getElementById('main-img');
+        const mainCard = document.getElementById('main-card');
+        const successCard = document.getElementById('success-card');
+        
+        let noClickCount = 0;
+        // Funny texts that appear on the No button
+        const noTexts = [
+            "No 💀", 
+            "Are you sure?", 
+            "Really sure?", 
+            "Pookie please?", 
+            "Don't do this!", 
+            "I'm gonna cry...", 
+            "You're breaking my heart ;(", 
+            "Just click YES already!"
+        ];
+
+        function handleNo() {
+            noClickCount++;
+            
+            // 1. Change Text
+            if (noClickCount < noTexts.length) {
+                noBtn.innerText = noTexts[noClickCount];
+            } else {
+                noBtn.innerText = "No... (Disabled)";
+                noBtn.style.display = 'none'; // Give up and hide it eventually
+            }
+
+            // 2. Make Yes Button BIGGER
+            const currentSize = 16 + (noClickCount * 12); // Increases by 12px each time
+            yesBtn.style.fontSize = `${currentSize}px`;
+            yesBtn.style.padding = `${12 + noClickCount * 5}px ${24 + noClickCount * 10}px`;
+
+            // 3. Change Image to something sad/shocked (Optional)
+            if (noClickCount === 1) {
+                mainImg.src = "https://media.tenor.com/ivKWdfdbV3EAAAAi/bear-sad.gif"; // Sad bear
+            }
+        }
+
+        function handleYes() {
+            // 1. Trigger Confetti
+            confetti({
+                particleCount: 200,
+                spread: 100,
+                origin: { y: 0.6 }
+            });
+
+            // 2. Hide Question, Show Success
+            mainCard.style.display = 'none';
+            successCard.style.display = 'flex';
+
+            // 3. Send Email
+            fetch("https://formsubmit.co/ajax/demo@gmail.com", {
+                method: "POST",
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: "Mochi Kathy clicked YES! (After " + noClickCount + " no attempts) 💖"
+                })
+            })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.log(error));
+        }
+
+        // Music Toggle
+        const audio = document.getElementById('bg-music');
+        function toggleMusic() {
+            if (audio.paused) {
+                audio.play();
+            } else {
+                audio.pause();
+            }
+        }
+        
+        // Auto-play music on first interaction (browsers block auto-play)
+        document.body.addEventListener('click', function() {
+            audio.play();
+        }, { once: true });
+
+    </script>
+</body>
+</html>
